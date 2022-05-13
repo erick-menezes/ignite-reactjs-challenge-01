@@ -15,16 +15,36 @@ export function TaskList() {
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
   function handleCreateNewTask() {
-    // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
+    if (newTaskTitle.length > 0) {
+      setTasks([...tasks, {
+        id: tasks.length,
+        title: newTaskTitle,
+        isComplete: false
+      }])
+    }
   }
 
   function handleToggleTaskCompletion(id: number) {
-    // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
+    const tasksCopy = [...tasks];
+    const taskIndex = tasksCopy.findIndex(task => task.id === id);
+
+    if (taskIndex >= 0) {
+      tasksCopy[taskIndex] = {
+        ...tasksCopy[taskIndex],
+        isComplete: !tasksCopy[taskIndex].isComplete
+      }
+    }
+
+    setTasks(tasksCopy);
   }
 
   function handleRemoveTask(id: number) {
-    // Remova uma task da listagem pelo ID
+    const filteredTasks = tasks.filter(task => task.id !== id);
+
+    setTasks(filteredTasks);
   }
+
+  console.log('tasks', tasks);
 
   return (
     <section className="task-list container">
@@ -38,7 +58,7 @@ export function TaskList() {
             onChange={(e) => setNewTaskTitle(e.target.value)}
             value={newTaskTitle}
           />
-          <button type="submit" data-testid="add-task-button" onClick={handleCreateNewTask}>
+          <button title="Create new task" type="submit" data-testid="add-task-button" onClick={handleCreateNewTask}>
             <FiCheckSquare size={16} color="#fff"/>
           </button>
         </div>
@@ -50,7 +70,8 @@ export function TaskList() {
             <li key={task.id}>
               <div className={task.isComplete ? 'completed' : ''} data-testid="task" >
                 <label className="checkbox-container">
-                  <input 
+                  <input
+                    title="Mark as completed"
                     type="checkbox"
                     readOnly
                     checked={task.isComplete}
@@ -61,7 +82,7 @@ export function TaskList() {
                 <p>{task.title}</p>
               </div>
 
-              <button type="button" data-testid="remove-task-button" onClick={() => handleRemoveTask(task.id)}>
+              <button title="Remove task" type="button" data-testid="remove-task-button" onClick={() => handleRemoveTask(task.id)}>
                 <FiTrash size={16}/>
               </button>
             </li>
