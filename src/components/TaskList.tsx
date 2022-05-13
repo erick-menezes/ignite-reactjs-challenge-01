@@ -16,26 +16,21 @@ export function TaskList() {
 
   function handleCreateNewTask() {
     if (newTaskTitle.length > 0) {
-      setTasks([...tasks, {
-        id: tasks.length,
+      const newTask = {
+        id: Math.random(),
         title: newTaskTitle,
         isComplete: false
-      }])
+      }
+
+      setTasks(previousValue => [...previousValue, newTask])
+      setNewTaskTitle('');
     }
   }
 
   function handleToggleTaskCompletion(id: number) {
-    const tasksCopy = [...tasks];
-    const taskIndex = tasksCopy.findIndex(task => task.id === id);
+    const changedTasks = tasks.map(task => task.id === id ? { ...task, isComplete: !task.isComplete } : task);
 
-    if (taskIndex >= 0) {
-      tasksCopy[taskIndex] = {
-        ...tasksCopy[taskIndex],
-        isComplete: !tasksCopy[taskIndex].isComplete
-      }
-    }
-
-    setTasks(tasksCopy);
+    setTasks(changedTasks);
   }
 
   function handleRemoveTask(id: number) {
@@ -43,8 +38,6 @@ export function TaskList() {
 
     setTasks(filteredTasks);
   }
-
-  console.log('tasks', tasks);
 
   return (
     <section className="task-list container">
